@@ -1,0 +1,17 @@
+[project]
+name = "tennis-my-life-archive"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Nick Benelli", email = "31021342+nick-benelli@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+tennis-my-life-archive = "tennis_my_life_archive:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
