@@ -13,3 +13,9 @@ https://stats.tennismylife.org/tennis-match-database
 
 This repository exists to preserve historical snapshots of the
 publicly downloadable datasets for reproducible research.
+
+## Data Dictionary
+
+Column definitions for the match CSVs (tournament info, winner/loser
+stats, etc.) are documented in [docs/data-dictionary.md](docs/data-dictionary.md).
+

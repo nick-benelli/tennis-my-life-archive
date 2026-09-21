@@ -6,15 +6,27 @@ import json
 import urllib.request
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-DEST_DIR = REPO_ROOT / "tml-data"
+from tennis_my_life_archive.layout import SOURCE_DIR, destination_for
+
 API_URL = "https://stats.tennismylife.org/api/data-files"
 
 
+def _already_archived(name: str, size: int) -> bool:
+    """Check whether name is already archived with a matching file size."""
+    archived = destination_for(Path(name))
+    if archived is None or not archived.is_file():
+        return False
+    return archived.stat().st_size == size
+
+
 def download_data_files(
-    dest_dir: Path = DEST_DIR, api_url: str = API_URL
+    dest_dir: Path = SOURCE_DIR, api_url: str = API_URL
 ) -> list[Path]:
-    """Fetch the TML data-files listing and download each file into dest_dir."""
+    """Download new/changed files from the TML API into dest_dir.
+
+    Files already archived (see tennis_my_life_archive.layout) with a
+    matching size are skipped, since the API doesn't provide a checksum.
+    """
     dest_dir.mkdir(parents=True, exist_ok=True)
 
     request = urllib.request.Request(
@@ -25,8 +37,12 @@ def download_data_files(
 
     downloaded: list[Path] = []
     for entry in payload["files"]:
-        target = dest_dir / entry["name"]
-        print(f"{entry['name']} <- {entry['url']}")
+        name = entry["name"]
+        if _already_archived(name, entry["size"]):
+            continue
+
+        target = dest_dir / name
+        print(f"{name} <- {entry['url']}")
         urllib.request.urlretrieve(entry["url"], target)
         downloaded.append(target)
 
