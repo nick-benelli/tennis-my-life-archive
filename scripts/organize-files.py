@@ -2,10 +2,13 @@
 """Organize raw CSVs from tml-data/ into the structured data/ folder.
 
 Layout produced:
-    data/atp/ATP_Database.csv, atp_rankings_*.csv   (top-level ATP reference files)
-    data/atp/atp/                                   (top tier tour: YYYY.csv, atp_quali/, etc.)
+    data/atp/ATP_Database.csv, atp_rankings_*.csv   (top-level ATP reference
+                                                     files)
+    data/atp/atp/                                   (top tier tour: YYYY.csv,
+                                                     atp_quali/, etc.)
     data/atp/challenger/                             (challenger tour)
-    data/wta/wta/                                    (WTA tour, leaves room for a future data/wta/itf/)
+    data/wta/wta/                                    (WTA tour, leaves room for
+                                                      a future data/wta/itf/)
 
 Run with --dry-run to preview the moves without touching the filesystem.
 Pass --delete-source to remove tml-data/ once every file has been moved.
@@ -32,13 +35,14 @@ WTA_TOUR_DIR = WTA_TOP_DIR / "wta"
 ATP_TOP_LEVEL_FILES = re.compile(r"^(ATP_Database|atp_rankings_.*)\.csv$")
 CHALLENGER_FILE = re.compile(r"^(\d{4}_challenger|challenger_ongoing_tourneys)\.csv$")
 WTA_FILE = re.compile(r"^(\d{4}_wta|wta_ongoing_tourneys)\.csv$")
-ATP_TOUR_FILE = re.compile(
-    r"^(\d{4}|atp_matches_amateur|ongoing_tourneys)\.csv$"
-)
+ATP_TOUR_FILE = re.compile(r"^(\d{4}|atp_matches_amateur|ongoing_tourneys)\.csv$")
 
 
 def destination_for(path: Path) -> Path | None:
-    """Return the destination path for a file/dir relative to tml-data, or None if unrecognized."""
+    """Return the destination path for a file/dir relative to tml-data.
+
+    Returns None if unrecognized.
+    """
     name = path.name
 
     if path.is_dir():
@@ -59,9 +63,18 @@ def destination_for(path: Path) -> Path | None:
 
 
 def main() -> None:
+    """Move recognized files from tml-data/ into data/, reporting progress."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dry-run", action="store_true", help="Show planned moves without moving anything")
-    parser.add_argument("--delete-source", action="store_true", help="Delete tml-data/ after a successful move")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show planned moves without moving anything",
+    )
+    parser.add_argument(
+        "--delete-source",
+        action="store_true",
+        help="Delete tml-data/ after a successful move",
+    )
     args = parser.parse_args()
 
     if not SOURCE_DIR.is_dir():
